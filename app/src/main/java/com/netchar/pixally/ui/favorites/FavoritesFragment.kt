@@ -1,4 +1,4 @@
-package com.netchar.pixally.ui.dashboard
+package com.netchar.pixally.ui.favorites
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/navigation_favorites"
-        android:name="com.netchar.pixally.ui.dashboard.FavoritesFragment"
+        android:name="com.netchar.pixally.ui.favorites.FavoritesFragment"
         android:label="@string/title_favorites"
         tools:layout="@layout/fragment_favorites" />
 
