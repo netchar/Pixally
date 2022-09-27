@@ -11,6 +11,7 @@ import com.netchar.pixally.infrastructure.auth.OAuthService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import javax.inject.Qualifier
@@ -44,7 +45,7 @@ class AppModule {
     @Provides
     @Singleton
     @AppPrefs
-    fun provideAuthPrefs(app: Context): SharedPreferences = app.getSharedPreferences("appPreferences", Context.MODE_PRIVATE)
+    fun provideAuthPrefs(@ApplicationContext app: Context): SharedPreferences = app.getSharedPreferences("appPreferences", Context.MODE_PRIVATE)
 }
 
 @Qualifier

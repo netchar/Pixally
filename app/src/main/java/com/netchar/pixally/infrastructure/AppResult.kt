@@ -7,7 +7,7 @@ import java.io.IOException
 
 sealed class AppResult<out T> {
     class Success<out T>(val data: T) : AppResult<T>()
-    class Error<out T>(val error: ErrorObject) : AppResult<T>()
+    class Error(val error: ErrorObject) : AppResult<Nothing>()
 
     companion object {
         inline fun <R> of(block: () -> R): AppResult<R> {

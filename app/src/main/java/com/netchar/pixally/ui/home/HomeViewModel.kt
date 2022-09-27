@@ -1,6 +1,7 @@
 package com.netchar.pixally.ui.home
 
 import androidx.lifecycle.viewModelScope
+import com.netchar.pixally.domain.entity.error.ErrorObject
 import com.netchar.pixally.domain.usecase.GetImagesUseCase
 import com.netchar.pixally.infrastructure.AppResult
 import com.netchar.pixally.ui.abstractions.viewmodel.BaseViewModel
@@ -23,13 +24,23 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun fetchPhotos() {
-        getImages.invoke()
+        getImages.getImages(false, GetImagesUseCase.PhotosRequest())
             .onStart {
                 emitEvent(HomeEvent.ShowLoadingIndicator)
             }.onEach { result ->
                 when (result) {
                     is AppResult.Success -> emitEvent(HomeEvent.PhotosLoaded(result.data))
-                    is AppResult.Error -> emitEvent(HomeEvent.DisplayToastErrorMessage("Something went wrong"))
+                    is AppResult.Error -> when (result.error) {
+                        ErrorObject.ApiError.AccessDenied,
+                        ErrorObject.ApiError.JsonParsing,
+                        ErrorObject.ApiError.Network,
+                        ErrorObject.ApiError.NotFound,
+                        ErrorObject.ApiError.ServiceUnavailable,
+                        ErrorObject.ApiError.Timeout,
+                        ErrorObject.ApiError.TooManyRequests,
+                        ErrorObject.ApiError.Unauthenticated -> emitEvent(HomeEvent.DisplayToastErrorMessage(result.error.toString()))
+                        is ErrorObject.ApiError.Unknown -> emitEvent(HomeEvent.DisplayToastErrorMessage(result.error.message))
+                    }
                 }
             }.launchIn(viewModelScope)
     }
