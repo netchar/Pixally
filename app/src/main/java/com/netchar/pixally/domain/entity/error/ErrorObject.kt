@@ -1,7 +1,7 @@
 package com.netchar.pixally.domain.entity.error
 
-sealed class ErrorEntity {
-    sealed class ApiError : ErrorEntity() {
+sealed class ErrorObject {
+    sealed class ApiError : ErrorObject() {
         object Network : ApiError()
         object AccessDenied : ApiError()
         object ServiceUnavailable : ApiError()

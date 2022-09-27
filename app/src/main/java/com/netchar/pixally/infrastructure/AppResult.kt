@@ -1,26 +1,26 @@
 package com.netchar.pixally.infrastructure
 
-import com.netchar.pixally.domain.entity.error.ErrorEntity
+import com.netchar.pixally.domain.entity.error.ErrorObject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.TimeoutCancellationException
 import java.io.IOException
 
-sealed class Resource<out T> {
-    class Success<out T>(val data: T) : Resource<T>()
-    class Error<out T>(val error: ErrorEntity) : Resource<T>()
+sealed class AppResult<out T> {
+    class Success<out T>(val data: T) : AppResult<T>()
+    class Error<out T>(val error: ErrorObject) : AppResult<T>()
 
     companion object {
-        inline fun <R> of(block: () -> R): Resource<R> {
+        inline fun <R> of(block: () -> R): AppResult<R> {
             return try {
                 Success(block())
             } catch (t: TimeoutCancellationException) {
-                Error(ErrorEntity.ApiError.Timeout)
+                Error(ErrorObject.ApiError.Timeout)
             } catch (c: CancellationException) {
                 throw c
             } catch (ex: Exception) {
                 val errorEntity = when (ex) {
-                    is IOException -> ErrorEntity.ApiError.Network
-                    else -> ErrorEntity.ApiError.Unknown(-1, ex.message.orEmpty())
+                    is IOException -> ErrorObject.ApiError.Network
+                    else -> ErrorObject.ApiError.Unknown(-1, ex.message.orEmpty())
                 }
                 Error(errorEntity)
             }

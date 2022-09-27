@@ -2,7 +2,7 @@ package com.netchar.pixally.ui.home
 
 import androidx.lifecycle.viewModelScope
 import com.netchar.pixally.domain.usecase.GetImagesUseCase
-import com.netchar.pixally.infrastructure.Resource
+import com.netchar.pixally.infrastructure.AppResult
 import com.netchar.pixally.ui.abstractions.viewmodel.BaseViewModel
 import com.netchar.pixally.ui.abstractions.viewmodel.StateReducer
 import com.netchar.pixally.ui.home.adapter.UiImageItem.Companion.mapToUi
@@ -28,8 +28,8 @@ class HomeViewModel @Inject constructor(
                 emitEvent(HomeEvent.ShowLoadingIndicator)
             }.onEach { result ->
                 when (result) {
-                    is Resource.Success -> emitEvent(HomeEvent.PhotosLoaded(result.data))
-                    is Resource.Error -> emitEvent(HomeEvent.DisplayToastErrorMessage("Something went wrong"))
+                    is AppResult.Success -> emitEvent(HomeEvent.PhotosLoaded(result.data))
+                    is AppResult.Error -> emitEvent(HomeEvent.DisplayToastErrorMessage("Something went wrong"))
                 }
             }.launchIn(viewModelScope)
     }

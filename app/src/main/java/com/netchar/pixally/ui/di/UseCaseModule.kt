@@ -30,6 +30,6 @@ class UseCaseModule {
 
     @Provides
     fun providePhotosUseCase(photosRepository: ImageRepository): GetImagesUseCase {
-        return GetImagesUseCase { photosRepository.getPhotos() }
+        return GetImagesUseCase(photosRepository::getImages)
     }
 }
