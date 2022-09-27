@@ -27,6 +27,12 @@ class ImageRepositoryImpl @Inject constructor(
     override fun getImages(forceRefresh: Boolean, request: GetImagesUseCase.PhotosRequest): Flow<AppResult<List<Image>>> {
         return flow<AppResult<List<Image>>> {
             imageApi.getImages(request.page, request.perPage, request.imageType.value, request.safeSearch)
+                .onSuccess {
+                    val result = this.data
+                    val test = 0
+                    val images = result.hits.map { Image(it.largeImageURL, false) }
+                    emit(AppResult.Success(images))
+                }
         }.flowOn(dispatcher.io)
     }
 }
