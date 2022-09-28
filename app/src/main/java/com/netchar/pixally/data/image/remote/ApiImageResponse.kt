@@ -1,36 +1,37 @@
 package com.netchar.pixally.data.image.remote
 
-import kotlinx.serialization.SerialName
+import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
-@kotlinx.serialization.Serializable
+//@Serializable
 data class ApiImageResponse(
-        @SerialName("total") val total : Int,
-        @SerialName("totalHits") val totalHits : Int,
-        @SerialName("hits") val hits : List<ApiImage>
+        @SerializedName("total") val total : Int,
+        @SerializedName("totalHits") val totalHits : Int,
+        @SerializedName("hits") val hits : List<ApiImage>
 )
 
-@kotlinx.serialization.Serializable
+//@Serializable
 data class ApiImage(
-        @SerialName("id") val id : Int,
-        @SerialName("pageURL") val pageURL : String,
-        @SerialName("type") val type : String,
-        @SerialName("tags") val tags : String,
-        @SerialName("previewURL") val previewURL : String,
-        @SerialName("previewWidth") val previewWidth : Int,
-        @SerialName("previewHeight") val previewHeight : Int,
-        @SerialName("webformatURL") val webformatURL : String,
-        @SerialName("webformatWidth") val webformatWidth : Int,
-        @SerialName("webformatHeight") val webformatHeight : Int,
-        @SerialName("largeImageURL") val largeImageURL : String,
-        @SerialName("imageWidth") val imageWidth : Int,
-        @SerialName("imageHeight") val imageHeight : Int,
-        @SerialName("imageSize") val imageSize : Int,
-        @SerialName("views") val views : Int,
-        @SerialName("downloads") val downloads : Int,
-        @SerialName("favorites") val favorites : Int,
-        @SerialName("likes") val likes : Int,
-        @SerialName("comments") val comments : Int,
-        @SerialName("user_id") val user_id : Int,
-        @SerialName("user") val user : String,
-        @SerialName("userImageURL") val userImageURL : String
+        @SerializedName("id") val id : Int,
+        @SerializedName("pageURL") val pageURL : String,
+        @SerializedName("type") val type : String,
+        @SerializedName("tags") val tags : String,
+        @SerializedName("previewURL") val previewURL : String,
+        @SerializedName("previewWidth") val previewWidth : Int,
+        @SerializedName("previewHeight") val previewHeight : Int,
+        @SerializedName("webformatURL") val webformatURL : String,
+        @SerializedName("webformatWidth") val webformatWidth : Int,
+        @SerializedName("webformatHeight") val webformatHeight : Int,
+        @SerializedName("largeImageURL") val largeImageURL : String,
+        @SerializedName("imageWidth") val imageWidth : Int,
+        @SerializedName("imageHeight") val imageHeight : Int,
+        @SerializedName("imageSize") val imageSize : Int,
+        @SerializedName("views") val views : Int,
+        @SerializedName("downloads") val downloads : Int,
+        @SerializedName("favorites") val favorites : Int,
+        @SerializedName("likes") val likes : Int,
+        @SerializedName("comments") val comments : Int,
+        @SerializedName("user_id") val user_id : Int,
+        @SerializedName("user") val user : String,
+        @SerializedName("userImageURL") val userImageURL : String
 )

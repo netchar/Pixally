@@ -1,7 +1,7 @@
 package com.netchar.pixally.ui.home
 
 import androidx.lifecycle.viewModelScope
-import com.netchar.pixally.domain.entity.error.ErrorObject
+import com.netchar.pixally.domain.entity.error.ErrorEntity
 import com.netchar.pixally.domain.usecase.GetImagesUseCase
 import com.netchar.pixally.infrastructure.AppResult
 import com.netchar.pixally.ui.abstractions.viewmodel.BaseViewModel
@@ -31,15 +31,15 @@ class HomeViewModel @Inject constructor(
                 when (result) {
                     is AppResult.Success -> emitEvent(HomeEvent.PhotosLoaded(result.data))
                     is AppResult.Error -> when (result.error) {
-                        ErrorObject.ApiError.AccessDenied,
-                        ErrorObject.ApiError.JsonParsing,
-                        ErrorObject.ApiError.Network,
-                        ErrorObject.ApiError.NotFound,
-                        ErrorObject.ApiError.ServiceUnavailable,
-                        ErrorObject.ApiError.Timeout,
-                        ErrorObject.ApiError.TooManyRequests,
-                        ErrorObject.ApiError.Unauthenticated -> emitEvent(HomeEvent.DisplayToastErrorMessage(result.error.toString()))
-                        is ErrorObject.ApiError.Unknown -> emitEvent(HomeEvent.DisplayToastErrorMessage(result.error.message))
+                        ErrorEntity.ApiError.AccessDenied,
+                        ErrorEntity.ApiError.JsonParsing,
+                        ErrorEntity.ApiError.Network,
+                        ErrorEntity.ApiError.NotFound,
+                        ErrorEntity.ApiError.ServiceUnavailable,
+                        ErrorEntity.ApiError.Timeout,
+                        ErrorEntity.ApiError.TooManyRequests,
+                        ErrorEntity.ApiError.Unauthenticated -> emitEvent(HomeEvent.DisplayToastErrorMessage(result.error.toString()))
+                        is ErrorEntity.ApiError.Unknown -> emitEvent(HomeEvent.DisplayToastErrorMessage(result.error.message))
                     }
                 }
             }.launchIn(viewModelScope)

@@ -1,7 +1,8 @@
 package com.netchar.pixally.ui.di
 
+import com.google.gson.Gson
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.netchar.pixally.data.image.AppResultCallAdapterFactory
+import com.netchar.pixally.infrastructure.retrofit.adapter.AppResultCallAdapterFactory
 import com.netchar.pixally.data.image.remote.ImageApi
 import dagger.Module
 import dagger.Provides
@@ -14,6 +15,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -49,7 +51,8 @@ class NetworkModule {
         return Retrofit.Builder()
             .client(httpClient)
             .baseUrl(BASE_URL)
-            .addConverterFactory(Json.asConverterFactory(contentType))
+            .addConverterFactory(GsonConverterFactory.create(Gson()))
+//            .addConverterFactory(Json.asConverterFactory(contentType))
             .addCallAdapterFactory(AppResultCallAdapterFactory.create())
             .build()
     }
