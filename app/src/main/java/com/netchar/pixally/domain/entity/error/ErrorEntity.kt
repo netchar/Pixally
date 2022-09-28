@@ -6,7 +6,7 @@ sealed class ErrorEntity {
         object Network : ApiError()
         object AccessDenied : ApiError()
         object ServiceUnavailable : ApiError()
-        object JsonParsing : ApiError()
+        class JsonParsing(val message: String) : ApiError()
         object NotFound : ApiError()
         object TooManyRequests : ApiError()
         object Unauthenticated : ApiError()

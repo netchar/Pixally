@@ -34,7 +34,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun setupViews() {
         binding.homeRecycler.adapter = adapter
         binding.homeLayoutRefresh.setOnRefreshListener {
-            viewModel.refresh()
+            viewModel.sendIntent(HomeIntent.Refresh)
         }
     }
 
@@ -46,12 +46,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun updateUi(state: HomeState) {
-        val photos = state.photos
-        if (photos.isNotEmpty()) {
-            adapter.submitList(photos)
-        }
+        adapter.submitList(state.photos)
         binding.homeLayoutRefresh.isRefreshing = state.isLoading
-
         state.errorMessage?.let { errorMessage ->
             if (errorMessage is HomeState.ErrorMessage.Toast) {
                 context.showToast(errorMessage.message)

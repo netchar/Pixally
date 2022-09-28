@@ -1,9 +1,9 @@
 package com.netchar.pixally.ui.di
 
-import com.google.gson.Gson
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.netchar.pixally.infrastructure.retrofit.adapter.AppResultCallAdapterFactory
 import com.netchar.pixally.data.image.remote.ImageApi
+import com.netchar.pixally.infrastructure.retrofit.adapter.AppResultCallAdapterFactory
+import com.netchar.pixally.ui.util.isDebug
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,7 +15,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -31,35 +30,51 @@ class NetworkModule {
     fun provideOkHttpClient(
         @OAuthInterceptor authInterceptor: Interceptor,
         loggingInterceptor: HttpLoggingInterceptor
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(authInterceptor)
-        .addInterceptor(loggingInterceptor)
-        .build()
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
+            .addInterceptor(loggingInterceptor)
+            .build()
+    }
 
     @Provides
     @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor()
-            .setLevel(HttpLoggingInterceptor.Level.BODY)
+        return HttpLoggingInterceptor().apply {
+            if (isDebug) {
+                setLevel(HttpLoggingInterceptor.Level.BODY)
+            }
+        }
+
     }
 
     @Provides
     @Singleton
     @ExperimentalSerializationApi
-    fun provideRetrofit(httpClient: OkHttpClient): Retrofit {
+    fun provideSerializationJson(): Json {
+        return Json {
+            ignoreUnknownKeys = true
+            prettyPrint = true
+            prettyPrintIndent = "  "
+        }
+    }
+
+    @Provides
+    @Singleton
+    @ExperimentalSerializationApi
+    fun provideRetrofit(httpClient: OkHttpClient, json: Json): Retrofit {
         val contentType = "application/json".toMediaType()
         return Retrofit.Builder()
             .client(httpClient)
             .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(Gson()))
-//            .addConverterFactory(Json.asConverterFactory(contentType))
+            .addConverterFactory(json.asConverterFactory(contentType))
             .addCallAdapterFactory(AppResultCallAdapterFactory.create())
             .build()
     }
 
     @Provides
     @Singleton
-    fun provideImagesApi(retrofit: Retrofit) : ImageApi {
+    fun provideImagesApi(retrofit: Retrofit): ImageApi {
         return retrofit.create(ImageApi::class.java)
     }
 }

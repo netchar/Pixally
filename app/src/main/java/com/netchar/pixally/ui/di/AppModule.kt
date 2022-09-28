@@ -8,6 +8,7 @@ import com.netchar.pixally.infrastructure.InternetChecker
 import com.netchar.pixally.infrastructure.NetworkConnectivityChecker
 import com.netchar.pixally.infrastructure.auth.AuthInterceptor
 import com.netchar.pixally.infrastructure.auth.OAuthService
+import com.netchar.pixally.ui.AppInitializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,17 +36,29 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideOauthService(@AppPrefs oauthPrefs: SharedPreferences): IOAuthService = OAuthService(oauthPrefs)
+    fun provideOauthService(@AppPrefs oauthPrefs: SharedPreferences): IOAuthService {
+        return OAuthService(oauthPrefs)
+    }
 
     @Provides
     @Singleton
     @OAuthInterceptor
-    fun provideOAuthInterceptor(oAuthRepository: IOAuthService): Interceptor = AuthInterceptor(oAuthRepository)
+    fun provideOAuthInterceptor(oAuthRepository: IOAuthService): Interceptor {
+        return AuthInterceptor(oAuthRepository)
+    }
 
     @Provides
     @Singleton
     @AppPrefs
-    fun provideAuthPrefs(@ApplicationContext app: Context): SharedPreferences = app.getSharedPreferences("appPreferences", Context.MODE_PRIVATE)
+    fun provideAuthPrefs(@ApplicationContext app: Context): SharedPreferences {
+        return app.getSharedPreferences("appPreferences", Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppInitializer() : AppInitializer {
+        return AppInitializer()
+    }
 }
 
 @Qualifier

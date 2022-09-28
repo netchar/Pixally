@@ -1,5 +1,6 @@
 package com.netchar.pixally.data.image.remote
 
+import com.netchar.pixally.data.image.remote.dto.ApiImageResponse
 import com.netchar.pixally.infrastructure.AppResult
 import retrofit2.http.GET
 import retrofit2.http.Query
