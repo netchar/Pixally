@@ -1,4 +1,4 @@
-package com.example.playgroundapp.presentation.infrastructure.auth
+package com.netchar.pixally.data.pixabay.auth
 
 
 interface IOAuthService {

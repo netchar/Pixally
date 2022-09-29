@@ -11,6 +11,9 @@ sealed class ErrorEntity {
         object TooManyRequests : ApiError()
         object Unauthenticated : ApiError()
         object Timeout : ApiError()
+        object NoContent : ApiError()
         class Unknown(val code: Int, val message: String) : ApiError()
     }
+
+    object NoInternet : ErrorEntity()
 }

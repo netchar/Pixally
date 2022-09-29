@@ -1,20 +1,20 @@
 package com.netchar.pixally.infrastructure.retrofit.adapter
 
-import com.netchar.pixally.infrastructure.AppResult
+import com.netchar.pixally.infrastructure.ResultWrapper
 import retrofit2.Call
 import retrofit2.CallAdapter
 import retrofit2.Retrofit
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
-class AppResultCallAdapterFactory : CallAdapter.Factory() {
-    override fun get(returnType: Type, annotations: Array<Annotation>, retrofit: Retrofit): AppResultAdapter? {
+class ResultWrapperCallAdapterFactory : CallAdapter.Factory() {
+    override fun get(returnType: Type, annotations: Array<Annotation>, retrofit: Retrofit): ResultWrapperCallAdapter? {
         if (returnType.isRawTypeOf<Call<*>>()) {
             val returnTypeParameter: Type = getGenericParameterOf(returnType)
 
-            if (returnTypeParameter.isRawTypeOf<AppResult<*>>()) {
+            if (returnTypeParameter.isRawTypeOf<ResultWrapper<*>>()) {
                 val resultTypeParameter: Type = getGenericParameterOf(returnTypeParameter)
-                return AppResultAdapter(resultTypeParameter)
+                return ResultWrapperCallAdapter(resultTypeParameter)
             }
         }
 
@@ -24,7 +24,7 @@ class AppResultCallAdapterFactory : CallAdapter.Factory() {
     private fun getGenericParameterOf(returnType: Type) = getParameterUpperBound(0, returnType as ParameterizedType)
 
     companion object {
-        fun create() = AppResultCallAdapterFactory()
+        fun create() = ResultWrapperCallAdapterFactory()
 
         private inline fun <reified T: Any> Type.isRawTypeOf() : Boolean {
             return getRawType(this) == T::class.java

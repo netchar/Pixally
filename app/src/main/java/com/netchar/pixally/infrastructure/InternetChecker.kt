@@ -5,11 +5,14 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import java.io.IOException
+import java.net.InetSocketAddress
+import java.net.Socket
 
 
 class InternetChecker(private val applicationContext: Context) : NetworkConnectivityChecker {
 
-    override val isConnected: Boolean
+    override val isConnectionOn: Boolean
         get() = hasInternetConnection(applicationContext)
 
     private fun hasInternetConnection(context: Context): Boolean {
@@ -41,8 +44,26 @@ class InternetChecker(private val applicationContext: Context) : NetworkConnecti
         val nwInfo = connectivityManager.activeNetworkInfo ?: return false
         return nwInfo.isConnected
     }
+
+    override val isInternetAvailable: Boolean
+        get() = isNetworkReachable()
+
+    private fun isNetworkReachable(): Boolean {
+        return try {
+            val timeoutMs = 1500
+            val socket = Socket()
+
+            socket.use {
+                it.connect(InetSocketAddress("8.8.8.8", 53), timeoutMs)
+            }
+            true
+        } catch (e: IOException) {
+            false
+        }
+    }
 }
 
 interface NetworkConnectivityChecker {
-    val isConnected: Boolean
+    val isConnectionOn: Boolean
+    val isInternetAvailable: Boolean
 }

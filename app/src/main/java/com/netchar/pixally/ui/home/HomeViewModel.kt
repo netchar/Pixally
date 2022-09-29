@@ -3,8 +3,8 @@ package com.netchar.pixally.ui.home
 import androidx.lifecycle.viewModelScope
 import com.netchar.pixally.domain.entity.error.ErrorEntity
 import com.netchar.pixally.domain.usecase.GetImagesUseCase
-import com.netchar.pixally.infrastructure.AppResult.Companion.onError
-import com.netchar.pixally.infrastructure.AppResult.Companion.onSuccess
+import com.netchar.pixally.infrastructure.ResultWrapper.Companion.onError
+import com.netchar.pixally.infrastructure.ResultWrapper.Companion.onSuccess
 import com.netchar.pixally.ui.abstractions.viewmodel.BaseMviViewModel
 import com.netchar.pixally.ui.abstractions.viewmodel.StateReducer
 import com.netchar.pixally.ui.home.adapter.UiImageItem.Companion.mapToUi

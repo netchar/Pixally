@@ -1,7 +1,6 @@
-package com.netchar.pixally.infrastructure.auth
+package com.netchar.pixally.data.pixabay.auth
 
 import android.content.SharedPreferences
-import com.example.playgroundapp.presentation.infrastructure.auth.IOAuthService
 import com.netchar.pixally.BuildConfig
 
 class OAuthService(

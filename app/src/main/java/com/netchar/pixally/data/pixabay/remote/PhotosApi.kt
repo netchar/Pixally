@@ -1,7 +1,6 @@
-package com.netchar.pixally.data.image.remote
+package com.netchar.pixally.data.pixabay.remote
 
-import com.netchar.pixally.data.image.remote.dto.ApiImageResponse
-import com.netchar.pixally.infrastructure.AppResult
+import com.netchar.pixally.infrastructure.ResultWrapper
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -13,5 +12,5 @@ interface ImageApi {
         @Query("per_page") perPage: Int,
         @Query("image_type") imageType: String,
         @Query("safesearch") safeSearch: Boolean
-    ): AppResult<ApiImageResponse>
+    ): ResultWrapper<ImageResponse>
 }

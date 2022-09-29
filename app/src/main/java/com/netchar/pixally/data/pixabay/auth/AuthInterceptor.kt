@@ -1,6 +1,5 @@
-package com.netchar.pixally.infrastructure.auth
+package com.netchar.pixally.data.pixabay.auth
 
-import com.example.playgroundapp.presentation.infrastructure.auth.IOAuthService
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
