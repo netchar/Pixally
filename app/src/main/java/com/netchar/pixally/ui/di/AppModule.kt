@@ -2,9 +2,11 @@ package com.netchar.pixally.ui.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.room.Room
 import com.netchar.pixally.infrastructure.CoroutineDispatcher
 import com.netchar.pixally.infrastructure.InternetChecker
 import com.netchar.pixally.infrastructure.NetworkConnectivityChecker
+import com.netchar.pixally.infrastructure.database.AppDatabase
 import com.netchar.pixally.ui.AppInitializer
 import dagger.Module
 import dagger.Provides
@@ -30,7 +32,6 @@ class AppModule {
         return InternetChecker(context)
     }
 
-
     @Provides
     @Singleton
     @AppPrefs
@@ -42,6 +43,13 @@ class AppModule {
     @Singleton
     fun provideAppInitializer(): AppInitializer {
         return AppInitializer()
+    }
+
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext app: Context): AppDatabase {
+        return Room.databaseBuilder(app, AppDatabase::class.java, "pixally_db")
+            .build()
     }
 }
 

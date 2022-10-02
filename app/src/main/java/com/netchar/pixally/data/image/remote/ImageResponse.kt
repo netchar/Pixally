@@ -1,4 +1,4 @@
-package com.netchar.pixally.data.pixabay.remote
+package com.netchar.pixally.data.image.remote
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

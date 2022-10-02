@@ -1,4 +1,4 @@
-package com.netchar.pixally.data.pixabay.local
+package com.netchar.pixally.data.image.local.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

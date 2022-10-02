@@ -32,7 +32,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun fetchPhotos() {
-        getImages.getImages(false, GetImagesUseCase.PhotosRequest())
+        getImages.getImages()
             .onStart {
                 emitEvent(HomeEvent.ShowLoadingIndicator)
             }.onEach {

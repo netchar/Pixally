@@ -1,4 +1,4 @@
-package com.netchar.pixally.data.pixabay.auth
+package com.netchar.pixally.data.image.auth
 
 import okhttp3.Interceptor
 import okhttp3.Request

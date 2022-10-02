@@ -1,6 +1,7 @@
 package com.netchar.pixally.infrastructure
 
 import com.netchar.pixally.domain.entity.error.ErrorEntity
+import kotlinx.coroutines.flow.FlowCollector
 
 sealed class ResultWrapper<out T> {
     class Success<out T>(val data: T) : ResultWrapper<T>()
@@ -13,6 +14,14 @@ sealed class ResultWrapper<out T> {
 
         inline fun <T> ResultWrapper<T>.onError(block: Error.() -> Unit) = apply {
             if (this is Error) block(this)
+        }
+
+        suspend fun <T> FlowCollector<ResultWrapper<T>>.emitSuccess(block: () -> T) {
+            emit(Success(block()))
+        }
+
+        suspend fun <T> FlowCollector<ResultWrapper<T>>.emitError(block: () -> ErrorEntity) {
+            emit(Error(block()))
         }
     }
 }

@@ -1,16 +1,16 @@
-package com.netchar.pixally.data.pixabay.di
+package com.netchar.pixally.data.image.di
 
-import android.content.SharedPreferences
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.netchar.pixally.data.pixabay.ImageRepositoryImpl
-import com.netchar.pixally.data.pixabay.auth.AuthInterceptor
-import com.netchar.pixally.data.pixabay.auth.IOAuthService
-import com.netchar.pixally.data.pixabay.auth.OAuthService
-import com.netchar.pixally.data.pixabay.remote.ImageApi
+import com.netchar.pixally.data.image.repository.ImageRepositoryImpl
+import com.netchar.pixally.data.image.auth.AuthInterceptor
+import com.netchar.pixally.data.image.auth.IOAuthService
+import com.netchar.pixally.data.image.auth.OAuthService
+import com.netchar.pixally.data.image.local.dao.ImageDao
+import com.netchar.pixally.data.image.remote.ImageApi
 import com.netchar.pixally.domain.repo.ImageRepository
+import com.netchar.pixally.infrastructure.database.AppDatabase
 import com.netchar.pixally.infrastructure.retrofit.adapter.ResultWrapperCallAdapterFactory
 import com.netchar.pixally.infrastructure.retrofit.interceptor.NoNetworkInterceptor
-import com.netchar.pixally.ui.di.AppPrefs
 import com.netchar.pixally.ui.di.NetworkModule
 import dagger.Binds
 import dagger.Module
@@ -32,7 +32,11 @@ abstract class ImageModule {
     @Binds
     abstract fun bindImagesRepository(repositoryImpl: ImageRepositoryImpl): ImageRepository
 
-    companion object {
+    @Binds
+    @Singleton
+    abstract fun bindOauthService(impl: OAuthService) : IOAuthService
+
+    companion object Provider {
 
         @Provides
         @Singleton
@@ -42,8 +46,8 @@ abstract class ImageModule {
 
         @Provides
         @Singleton
-        fun provideOauthService(@AppPrefs oauthPrefs: SharedPreferences): IOAuthService {
-            return OAuthService(oauthPrefs)
+        fun provideCharactersDao(database: AppDatabase) : ImageDao {
+            return database.rocketDao()
         }
 
         @Provides

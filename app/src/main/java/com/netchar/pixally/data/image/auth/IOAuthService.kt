@@ -1,4 +1,4 @@
-package com.netchar.pixally.data.pixabay.auth
+package com.netchar.pixally.data.image.auth
 
 
 interface IOAuthService {

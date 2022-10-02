@@ -1,4 +1,4 @@
-package com.netchar.pixally.data.pixabay.remote
+package com.netchar.pixally.data.image.remote
 
 import com.netchar.pixally.infrastructure.ResultWrapper
 import retrofit2.http.GET

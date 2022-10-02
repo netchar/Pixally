@@ -5,9 +5,14 @@ import com.netchar.pixally.infrastructure.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 
 fun interface GetImagesUseCase {
-    fun getImages(forceRefresh: Boolean, request: PhotosRequest): Flow<ResultWrapper<List<Image>>>
+    fun getImages(): Flow<ResultWrapper<List<Image>>>
 
-    data class PhotosRequest(val page: Int = 1, val perPage: Int = 50, val imageType: ImageType = ImageType.PHOTO, val safeSearch: Boolean = true) {
+    data class PhotosRequest(val page: Int, val perPage: Int, val imageType: ImageType, val safeSearch: Boolean) {
+
+        companion object {
+            @JvmStatic
+            fun default() = PhotosRequest(1, 50, ImageType.PHOTO, true)
+        }
 
         enum class ImageType(val value: String) {
             ALL("all"),
