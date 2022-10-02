@@ -8,6 +8,8 @@ import com.netchar.pixally.data.image.auth.OAuthService
 import com.netchar.pixally.data.image.local.dao.ImageDao
 import com.netchar.pixally.data.image.remote.ImageApi
 import com.netchar.pixally.domain.repo.ImageRepository
+import com.netchar.pixally.domain.usecase.GetImagesUseCase
+import com.netchar.pixally.domain.usecase.RefreshImagesUseCase
 import com.netchar.pixally.infrastructure.database.AppDatabase
 import com.netchar.pixally.infrastructure.retrofit.adapter.ResultWrapperCallAdapterFactory
 import com.netchar.pixally.infrastructure.retrofit.interceptor.NoNetworkInterceptor
@@ -37,6 +39,16 @@ abstract class ImageModule {
     abstract fun bindOauthService(impl: OAuthService) : IOAuthService
 
     companion object Provider {
+
+        @Provides
+        fun provideRefreshImagesUseCase(photosRepository: ImageRepository): RefreshImagesUseCase {
+            return RefreshImagesUseCase(photosRepository::refreshImages)
+        }
+
+        @Provides
+        fun providePhotosUseCase(photosRepository: ImageRepository): GetImagesUseCase {
+            return GetImagesUseCase(photosRepository::getImages)
+        }
 
         @Provides
         @Singleton

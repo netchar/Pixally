@@ -28,8 +28,5 @@ import dagger.hilt.android.components.ViewModelComponent
 @InstallIn(ViewModelComponent::class)
 class UseCaseModule {
 
-    @Provides
-    fun providePhotosUseCase(photosRepository: ImageRepository): GetImagesUseCase {
-        return GetImagesUseCase(photosRepository::getImages)
-    }
+
 }

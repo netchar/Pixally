@@ -1,11 +1,12 @@
 package com.netchar.pixally.domain.repo
 
 import com.netchar.pixally.domain.entity.Image
+import com.netchar.pixally.domain.usecase.PhotosRequest
 import com.netchar.pixally.infrastructure.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 
 interface ImageRepository {
-    fun getImages(): Flow<ResultWrapper<List<Image>>>
+    fun getImages(request: PhotosRequest): Flow<ResultWrapper<List<Image>>>
 
-    suspend fun refreshImages() : ResultWrapper<Unit>
+    suspend fun refreshImages(request: PhotosRequest) : ResultWrapper<Unit>
 }

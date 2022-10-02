@@ -2,10 +2,11 @@ package com.netchar.pixally.ui.abstractions.viewmodel
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 
 abstract class BaseMviViewModel<I: UiIntent, S : UiState, E : UiEvent> : ViewModel() {
-    val state: Flow<S>
+    val state: StateFlow<S>
         get() = reducer.state
 
     private val reducer: StateReducer<S, E> by lazy {
