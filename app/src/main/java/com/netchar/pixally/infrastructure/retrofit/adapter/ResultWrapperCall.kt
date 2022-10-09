@@ -24,7 +24,7 @@ class ResultWrapperCall<T>(proxy: Call<T>) : ProxyCall<T, ResultWrapper<T>>(prox
             }
 
             override fun onFailure(call: Call<T>, t: Throwable) {
-                val result = parseError(t)
+                val result = parseException(t)
                 callback.onResponse(this@ResultWrapperCall, Response.success(result))
             }
         })
@@ -37,16 +37,21 @@ class ResultWrapperCall<T>(proxy: Call<T>) : ProxyCall<T, ResultWrapper<T>>(prox
                 val body = response.body() ?: throw NoContentException(code)
                 ResultWrapper.Success(body)
             } else {
-                ResultWrapper.Error(ErrorEntity.ApiError.Unknown(code, ""))
+                val responseErrorBody = response.errorBody()
+                if (responseErrorBody != null) {
+                    ResultWrapper.Error(ErrorEntity.ApiError.Unknown(code, responseErrorBody.string()))
+                } else {
+                    ResultWrapper.Error(ErrorEntity.ApiError.Unknown(code, ""))
+                }
             }
         } catch (e: NoContentException) {
-            parseError(e)
+            parseException(e)
         } catch (e: Exception) {
-            parseError(e)
+            parseException(e)
         }
     }
 
-    private fun parseError(ex: Throwable): ResultWrapper.Error {
+    private fun parseException(ex: Throwable): ResultWrapper.Error {
         val apiError = when (ex) {
             is NoConnectivityException,
             is NoInternetException -> ErrorEntity.NoInternet

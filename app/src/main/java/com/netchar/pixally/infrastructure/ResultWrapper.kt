@@ -16,12 +16,12 @@ sealed class ResultWrapper<out T> {
             if (this is Error) block(this)
         }
 
-        suspend fun <T> FlowCollector<ResultWrapper<T>>.emitSuccess(block: () -> T) {
-            emit(Success(block()))
+        suspend fun <T> FlowCollector<ResultWrapper<T>>.emitSuccess(data: T) {
+            emit(Success(data))
         }
 
-        suspend fun <T> FlowCollector<ResultWrapper<T>>.emitError(block: () -> ErrorEntity) {
-            emit(Error(block()))
+        suspend fun <T> FlowCollector<ResultWrapper<T>>.emitError(errorEntity: ErrorEntity) {
+            emit(Error(errorEntity))
         }
     }
 }

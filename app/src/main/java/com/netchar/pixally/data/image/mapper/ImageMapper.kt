@@ -21,6 +21,7 @@ object ImageMapper : EntityMapper<ImageResponse.Image, ImageEntity, Image> {
         return Image(
             url = photoUrl,
             isFavorite = false,
+            imageType = imageType,
             description = ImageDescription(name)
         )
     }

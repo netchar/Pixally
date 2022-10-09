@@ -45,15 +45,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                val type = when (menuItem.itemId) {
-                    R.id.menu_item_home_all -> HomeIntent.Refresh(PhotosRequest.ImageType.ALL)
-                    R.id.menu_item_home_photo -> HomeIntent.Refresh(PhotosRequest.ImageType.PHOTO)
-                    R.id.menu_item_home_illustration -> HomeIntent.Refresh(PhotosRequest.ImageType.ILLUSTRATION)
-                    R.id.menu_item_home_vector -> HomeIntent.Refresh(PhotosRequest.ImageType.VECTOR)
-                    else -> HomeIntent.Refresh(PhotosRequest.ImageType.ALL)
+                val imageType = when (menuItem.itemId) {
+                    R.id.menu_item_home_all -> PhotosRequest.ImageType.ALL
+                    R.id.menu_item_home_photo -> PhotosRequest.ImageType.PHOTO
+                    R.id.menu_item_home_illustration -> PhotosRequest.ImageType.ILLUSTRATION
+                    R.id.menu_item_home_vector -> PhotosRequest.ImageType.VECTOR
+                    else -> PhotosRequest.ImageType.ALL
                 }
 
-                viewModel.sendIntent(type)
+                val intent = HomeIntent.ApplyFilter(imageType)
+                viewModel.sendIntent(intent)
                 return true
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
@@ -62,7 +63,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun setupViews() {
         binding.homeRecycler.adapter = adapter
         binding.homeLayoutRefresh.setOnRefreshListener {
-            viewModel.sendIntent(HomeIntent.Refresh(viewModel.state.value.selectedImageType))
+            viewModel.sendIntent(HomeIntent.Refresh)
         }
     }
 

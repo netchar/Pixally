@@ -3,8 +3,10 @@ package com.netchar.pixally.ui.abstractions.viewmodel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-abstract class StateReducer<State : UiState, in Event : UiEvent>(initialVal: State) {
-    private val mutableState: MutableStateFlow<State> = MutableStateFlow(initialVal)
+abstract class StateReducer<State : UiState, in Event : UiEvent>(
+    initialState: State
+) {
+    private val mutableState: MutableStateFlow<State> = MutableStateFlow(initialState)
 
     val state: StateFlow<State> get() = mutableState
 

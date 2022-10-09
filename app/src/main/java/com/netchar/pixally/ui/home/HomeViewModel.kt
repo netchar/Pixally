@@ -6,18 +6,17 @@ import com.netchar.pixally.domain.usecase.GetImagesUseCase
 import com.netchar.pixally.domain.usecase.PhotosRequest
 import com.netchar.pixally.domain.usecase.RefreshImagesUseCase
 import com.netchar.pixally.infrastructure.ResultWrapper.Companion.onError
-import com.netchar.pixally.infrastructure.ResultWrapper.Companion.onSuccess
 import com.netchar.pixally.ui.abstractions.viewmodel.BaseMviViewModel
 import com.netchar.pixally.ui.abstractions.viewmodel.StateReducer
 import com.netchar.pixally.ui.home.adapter.UiImageItem.Companion.mapToUi
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.random.Random
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getImages: GetImagesUseCase,
@@ -25,21 +24,35 @@ class HomeViewModel @Inject constructor(
 ) : BaseMviViewModel<HomeIntent, HomeState, HomeEvent>() {
     override fun createReducer(): StateReducer<HomeState, HomeEvent> = HomeStateReducer()
 
+    private val filterByFlow = MutableStateFlow(state.value.selectedImageType)
+
     init {
-        sendIntent(HomeIntent.RequestPhotos)
+        filterByFlow
+            .onEach {
+                emitEvent(HomeEvent.FilterApplied(it))
+            }.flatMapLatest {
+                getImages.getImages(PhotosRequest.by(it))
+            }.onEach { images ->
+                emitEvent(HomeEvent.PhotosLoaded(images))
+            }.launchIn(viewModelScope)
     }
 
     override fun onIntent(intent: HomeIntent) {
         when (intent) {
-            is HomeIntent.Refresh -> refreshPhoto(intent.imageType)
-            HomeIntent.RequestPhotos -> fetchPhotos()
+            is HomeIntent.Refresh -> refreshImages()
+            is HomeIntent.ApplyFilter -> filterPhotosBy(intent.imageType)
         }
     }
 
-    private fun refreshPhoto(imageType: PhotosRequest.ImageType) {
+    private fun refreshImages() {
         viewModelScope.launch {
             emitEvent(HomeEvent.ShowLoadingIndicator)
-            val photosRequest = PhotosRequest.by(imageType)
+            val photosRequest = PhotosRequest(
+                page = Random.nextInt(2, 10),
+                perPage = 5,
+                imageType = state.value.selectedImageType,
+                safeSearch = true
+            )
             refreshImages.refreshImages(photosRequest)
                 .onError {
                     handleErrors(error)
@@ -47,18 +60,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun fetchPhotos() {
-        val photosRequest = PhotosRequest.by(state.value.selectedImageType)
-        getImages.getImages(photosRequest)
-            .onStart {
-                emitEvent(HomeEvent.ShowLoadingIndicator)
-            }.onEach {
-                it.onSuccess {
-                    emitEvent(HomeEvent.PhotosLoaded(data))
-                }.onError {
-                    handleErrors(error)
-                }
-            }.launchIn(viewModelScope)
+    private fun filterPhotosBy(imageType: PhotosRequest.ImageType) {
+        filterByFlow.tryEmit(imageType)
     }
 
     private fun handleErrors(error: ErrorEntity) {
@@ -68,21 +71,30 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private class HomeStateReducer : StateReducer<HomeState, HomeEvent>(HomeState.initial()) {
-        override fun reduce(oldState: HomeState, event: HomeEvent) = when (event) {
-            is HomeEvent.ShowLoadingIndicator -> oldState.copy(
-                isLoading = true,
-                errorMessage = null
-            )
-            is HomeEvent.PhotosLoaded -> oldState.copy(
-                isLoading = false,
-                photos = event.photos.map { it.mapToUi() },
-                errorMessage = null
-            )
-            is HomeEvent.DisplayToastErrorMessage -> oldState.copy(
-                isLoading = false,
-                errorMessage = HomeState.ErrorMessage.Toast(event.errorMessage)
-            )
+    private class HomeStateReducer : StateReducer<HomeState, HomeEvent>(
+        initialState = HomeState.initial()
+    ) {
+        override fun reduce(oldState: HomeState, event: HomeEvent): HomeState {
+            return when (event) {
+                is HomeEvent.ShowLoadingIndicator -> oldState.copy(
+                    isLoading = true,
+                    errorMessage = null
+                )
+                is HomeEvent.PhotosLoaded -> oldState.copy(
+                    isLoading = false,
+                    photos = event.photos.map { it.mapToUi() },
+                    errorMessage = null
+                )
+                is HomeEvent.DisplayToastErrorMessage -> oldState.copy(
+                    isLoading = false,
+                    errorMessage = HomeState.ErrorMessage.Toast(event.errorMessage)
+                )
+                is HomeEvent.FilterApplied -> oldState.copy(
+                    isLoading = false,
+                    errorMessage = null,
+                    selectedImageType = event.imageType
+                )
+            }
         }
     }
 }

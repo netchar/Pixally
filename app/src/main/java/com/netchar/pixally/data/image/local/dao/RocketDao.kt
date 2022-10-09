@@ -5,15 +5,20 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.netchar.pixally.data.image.local.model.ImageEntity
-import com.netchar.pixally.domain.usecase.PhotosRequest
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ImageDao {
 
-    @Query("SELECT * FROM images WHERE imageType = :type ORDER BY id DESC")
-    fun getImages(type: PhotosRequest.ImageType): Flow<List<ImageEntity>>
+    @Query("SELECT * FROM images ORDER BY id DESC")
+    fun getImages(): Flow<List<ImageEntity>>
+
+    @Query("SELECT * FROM images WHERE imageType LIKE '%' || :imageType || '%' ORDER BY id DESC")
+    fun getImagesByType(imageType: String): Flow<List<ImageEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveImages(images: List<ImageEntity>)
+
+    @Query("DELETE FROM images")
+    suspend fun deleteAll()
 }

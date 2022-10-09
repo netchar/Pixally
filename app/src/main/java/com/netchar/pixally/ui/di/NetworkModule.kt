@@ -31,11 +31,14 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor().apply {
-            if (isDebug) {
-                setLevel(HttpLoggingInterceptor.Level.BODY)
+        return HttpLoggingInterceptor()
+            .apply {
+                if (isDebug) {
+                    setLevel(HttpLoggingInterceptor.Level.BODY)
+                } else {
+                    setLevel(HttpLoggingInterceptor.Level.NONE)
+                }
             }
-        }
     }
 
     @Provides

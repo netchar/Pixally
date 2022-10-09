@@ -12,16 +12,5 @@ data class ImageEntity(
     val id: Int,
     val photoUrl: String,
     val name: String,
-
-    @TypeConverters(ImageEntityConverter::class)
-    val imageType: PhotosRequest.ImageType
+    val imageType: String
 )
-
-class ImageEntityConverter {
-
-    @TypeConverter
-    fun toImageType(value: String) = enumValueOf<PhotosRequest.ImageType>(value)
-
-    @TypeConverter
-    fun fromImageType(value: PhotosRequest.ImageType) = value.name
-}

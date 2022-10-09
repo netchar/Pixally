@@ -8,12 +8,13 @@ import com.netchar.pixally.ui.abstractions.viewmodel.UiState
 import com.netchar.pixally.ui.home.adapter.UiImageItem
 
 sealed class HomeIntent : UiIntent {
-    object RequestPhotos : HomeIntent()
-    class Refresh(val imageType: PhotosRequest.ImageType) : HomeIntent()
+    class ApplyFilter(val imageType: PhotosRequest.ImageType) : HomeIntent()
+    object Refresh : HomeIntent()
 }
 
 sealed class HomeEvent : UiEvent {
     object ShowLoadingIndicator : HomeEvent()
+    class FilterApplied(val imageType: PhotosRequest.ImageType): HomeEvent()
     class PhotosLoaded(val photos: List<Image>) : HomeEvent()
     class DisplayToastErrorMessage(val errorMessage: String) : HomeEvent()
 }
@@ -30,6 +31,6 @@ data class HomeState(
     }
 
     companion object {
-        fun initial(): HomeState = HomeState(true, emptyList(), PhotosRequest.ImageType.ILLUSTRATION)
+        fun initial(): HomeState = HomeState(true, emptyList(), PhotosRequest.ImageType.PHOTO)
     }
 }
