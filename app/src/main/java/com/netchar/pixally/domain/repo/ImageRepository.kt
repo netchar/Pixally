@@ -6,7 +6,7 @@ import com.netchar.pixally.infrastructure.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 
 interface ImageRepository {
-    fun getImages(request: PhotosRequest): Flow<List<Image>>
+    fun getImagesStream(request: PhotosRequest): Flow<ResultWrapper<List<Image>>>
 
     suspend fun refreshImages(request: PhotosRequest) : ResultWrapper<Unit>
 }

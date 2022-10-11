@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.Flow
 interface ImageDao {
 
     @Query("SELECT * FROM images ORDER BY id DESC")
-    fun getImages(): Flow<List<ImageEntity>>
+    fun getImagesStream(): Flow<List<ImageEntity>>
 
     @Query("SELECT * FROM images WHERE imageType LIKE '%' || :imageType || '%' ORDER BY id DESC")
-    fun getImagesByType(imageType: String): Flow<List<ImageEntity>>
+    fun getImagesByTypeStream(imageType: String): Flow<List<ImageEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveImages(images: List<ImageEntity>)

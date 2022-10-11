@@ -1,10 +1,7 @@
 package com.netchar.pixally.ui.home
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,7 +14,7 @@ import com.netchar.pixally.databinding.FragmentHomeBinding
 import com.netchar.pixally.domain.usecase.PhotosRequest
 import com.netchar.pixally.ui.home.adapter.ImageRecyclerItem
 import com.netchar.pixally.ui.home.adapter.UiImageItem
-import com.netchar.pixally.ui.util.GenericAdapter
+import com.netchar.pixally.ui.abstractions.adapter.GenericRecyclerAdapter
 import com.netchar.pixally.ui.util.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -28,7 +25,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val viewModel by viewModels<HomeViewModel>()
     private val binding by viewBinding(FragmentHomeBinding::bind)
     private val adapter by lazy {
-        GenericAdapter.create(ImageRecyclerItem(::onImageItemClicked))
+        GenericRecyclerAdapter.create(ImageRecyclerItem(::onImageItemClicked))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

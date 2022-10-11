@@ -47,7 +47,7 @@ abstract class ImageModule {
 
         @Provides
         fun providePhotosUseCase(photosRepository: ImageRepository): GetImagesUseCase {
-            return GetImagesUseCase(photosRepository::getImages)
+            return GetImagesUseCase(photosRepository::getImagesStream)
         }
 
         @Provides

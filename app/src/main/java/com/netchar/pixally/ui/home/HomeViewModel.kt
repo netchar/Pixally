@@ -6,12 +6,16 @@ import com.netchar.pixally.domain.usecase.GetImagesUseCase
 import com.netchar.pixally.domain.usecase.PhotosRequest
 import com.netchar.pixally.domain.usecase.RefreshImagesUseCase
 import com.netchar.pixally.infrastructure.ResultWrapper.Companion.onError
+import com.netchar.pixally.infrastructure.ResultWrapper.Companion.onSuccess
 import com.netchar.pixally.ui.abstractions.viewmodel.BaseMviViewModel
 import com.netchar.pixally.ui.abstractions.viewmodel.StateReducer
 import com.netchar.pixally.ui.home.adapter.UiImageItem.Companion.mapToUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.random.Random
@@ -32,8 +36,13 @@ class HomeViewModel @Inject constructor(
                 emitEvent(HomeEvent.FilterApplied(it))
             }.flatMapLatest {
                 getImages.getImages(PhotosRequest.by(it))
-            }.onEach { images ->
-                emitEvent(HomeEvent.PhotosLoaded(images))
+            }.onEach { resultWrapper ->
+                resultWrapper
+                    .onSuccess {
+                        emitEvent(HomeEvent.PhotosLoaded(data))
+                    }.onError {
+                        emitEvent(HomeEvent.DisplayToastErrorMessage(error.toString()))
+                    }
             }.launchIn(viewModelScope)
     }
 

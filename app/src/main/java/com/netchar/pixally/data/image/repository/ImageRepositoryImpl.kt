@@ -8,9 +8,11 @@ import com.netchar.pixally.domain.entity.Image
 import com.netchar.pixally.domain.repo.ImageRepository
 import com.netchar.pixally.domain.usecase.PhotosRequest
 import com.netchar.pixally.infrastructure.ResultWrapper
+import com.netchar.pixally.infrastructure.ResultWrapper.Companion.emitError
+import com.netchar.pixally.infrastructure.ResultWrapper.Companion.emitSuccess
+import com.netchar.pixally.infrastructure.ResultWrapper.Companion.onError
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 class ImageRepositoryImpl @Inject constructor(
@@ -18,10 +20,14 @@ class ImageRepositoryImpl @Inject constructor(
     private val imageDao: ImageDao,
 ) : ImageRepository {
 
-    override fun getImages(request: PhotosRequest): Flow<List<Image>> {
-        return imageDao.getImagesByType(request.imageType.value)
-            .map {
-                it.toDomains()
+    override fun getImagesStream(request: PhotosRequest): Flow<ResultWrapper<List<Image>>> {
+        return imageDao.getImagesByTypeStream(request.imageType.value)
+            .transform { imageEntities ->
+                if (imageEntities.isEmpty()) {
+                    refreshImages(request).onError { emitError(error) }
+                } else {
+                    emitSuccess(imageEntities.toDomains())
+                }
             }
     }
 
@@ -31,9 +37,7 @@ class ImageRepositoryImpl @Inject constructor(
                 imageDao.saveImages(response.data.hits.toEntities())
                 ResultWrapper.Success(Unit)
             }
-            is ResultWrapper.Error -> {
-                ResultWrapper.Error(response.error)
-            }
+            is ResultWrapper.Error -> response
         }
     }
 }
