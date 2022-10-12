@@ -34,13 +34,12 @@ class HomeViewModel @Inject constructor(
                 emitEvent(HomeEvent.FilterApplied(it))
             }.flatMapLatest {
                 getImages.getImages(PhotosRequest.by(it))
-            }.onEach { resultWrapper ->
-                resultWrapper
-                    .onSuccess {
-                        emitEvent(HomeEvent.PhotosLoaded(data))
-                    }.onError {
-                        emitEvent(HomeEvent.DisplayToastErrorMessage(error.toString()))
-                    }
+            }.onEach {
+                it.onSuccess {
+                    emitEvent(HomeEvent.PhotosLoaded(data))
+                }.onError {
+                    emitEvent(HomeEvent.DisplayToastErrorMessage(error.toString()))
+                }
             }.launchIn(viewModelScope)
     }
 
