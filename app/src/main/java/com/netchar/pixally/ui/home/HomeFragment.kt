@@ -50,8 +50,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     else -> PhotosRequest.ImageType.ALL
                 }
 
-                val intent = HomeIntent.ApplyFilter(imageType)
-                viewModel.sendIntent(intent)
+                viewModel.filterPhotosBy(imageType)
                 return true
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
@@ -60,7 +59,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun setupViews() {
         binding.homeRecycler.adapter = adapter
         binding.homeLayoutRefresh.setOnRefreshListener {
-            viewModel.sendIntent(HomeIntent.Refresh)
+            viewModel.refreshImages()
         }
     }
 

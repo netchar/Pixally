@@ -2,17 +2,12 @@ package com.netchar.pixally.ui.home
 
 import com.netchar.pixally.domain.entity.Image
 import com.netchar.pixally.domain.usecase.PhotosRequest
-import com.netchar.pixally.ui.abstractions.viewmodel.UiEvent
-import com.netchar.pixally.ui.abstractions.viewmodel.UiIntent
-import com.netchar.pixally.ui.abstractions.viewmodel.UiState
+import com.netchar.pixally.ui.abstractions.viewmodel.Event
+import com.netchar.pixally.ui.abstractions.viewmodel.State
 import com.netchar.pixally.ui.home.adapter.UiImageItem
 
-sealed class HomeIntent : UiIntent {
-    class ApplyFilter(val imageType: PhotosRequest.ImageType) : HomeIntent()
-    object Refresh : HomeIntent()
-}
 
-sealed class HomeEvent : UiEvent {
+sealed class HomeEvent : Event {
     object ShowLoadingIndicator : HomeEvent()
     class FilterApplied(val imageType: PhotosRequest.ImageType): HomeEvent()
     class PhotosLoaded(val photos: List<Image>) : HomeEvent()
@@ -24,7 +19,7 @@ data class HomeState(
     val photos: List<UiImageItem>,
     val selectedImageType: PhotosRequest.ImageType,
     val errorMessage: ErrorMessage? = null
-) : UiState {
+) : State {
 
     sealed class ErrorMessage {
         class Toast(val message: String) : ErrorMessage()

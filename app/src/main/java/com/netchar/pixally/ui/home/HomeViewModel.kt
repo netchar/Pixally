@@ -12,10 +12,7 @@ import com.netchar.pixally.ui.abstractions.viewmodel.StateReducer
 import com.netchar.pixally.ui.home.adapter.UiImageItem.Companion.mapToUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.random.Random
@@ -25,14 +22,15 @@ import kotlin.random.Random
 class HomeViewModel @Inject constructor(
     private val getImages: GetImagesUseCase,
     private val refreshImages: RefreshImagesUseCase
-) : BaseMviViewModel<HomeIntent, HomeState, HomeEvent>() {
-    override fun createReducer(): StateReducer<HomeState, HomeEvent> = HomeStateReducer()
+) : BaseMviViewModel<HomeState, HomeEvent>() {
 
     private val filterByFlow = MutableStateFlow(state.value.selectedImageType)
 
     init {
         filterByFlow
-            .onEach {
+            .onStart {
+                emitEvent(HomeEvent.ShowLoadingIndicator)
+            }.onEach {
                 emitEvent(HomeEvent.FilterApplied(it))
             }.flatMapLatest {
                 getImages.getImages(PhotosRequest.by(it))
@@ -46,14 +44,7 @@ class HomeViewModel @Inject constructor(
             }.launchIn(viewModelScope)
     }
 
-    override fun onIntent(intent: HomeIntent) {
-        when (intent) {
-            is HomeIntent.Refresh -> refreshImages()
-            is HomeIntent.ApplyFilter -> filterPhotosBy(intent.imageType)
-        }
-    }
-
-    private fun refreshImages() {
+    fun refreshImages() {
         viewModelScope.launch {
             emitEvent(HomeEvent.ShowLoadingIndicator)
             val photosRequest = PhotosRequest(
@@ -69,7 +60,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun filterPhotosBy(imageType: PhotosRequest.ImageType) {
+    fun filterPhotosBy(imageType: PhotosRequest.ImageType) {
         filterByFlow.tryEmit(imageType)
     }
 
@@ -80,29 +71,29 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private class HomeStateReducer : StateReducer<HomeState, HomeEvent>(
-        initialState = HomeState.initial()
-    ) {
-        override fun reduce(oldState: HomeState, event: HomeEvent): HomeState {
-            return when (event) {
-                is HomeEvent.ShowLoadingIndicator -> oldState.copy(
-                    isLoading = true,
-                    errorMessage = null
-                )
-                is HomeEvent.PhotosLoaded -> oldState.copy(
-                    isLoading = false,
-                    photos = event.photos.map { it.mapToUi() },
-                    errorMessage = null
-                )
-                is HomeEvent.DisplayToastErrorMessage -> oldState.copy(
-                    isLoading = false,
-                    errorMessage = HomeState.ErrorMessage.Toast(event.errorMessage)
-                )
-                is HomeEvent.FilterApplied -> oldState.copy(
-                    isLoading = false,
-                    errorMessage = null,
-                    selectedImageType = event.imageType
-                )
+    override fun createReducer(): StateReducer<HomeState, HomeEvent> {
+        return object : StateReducer<HomeState, HomeEvent>(initialState = HomeState.initial()) {
+            override fun reduce(oldState: HomeState, event: HomeEvent): HomeState {
+                return when (event) {
+                    is HomeEvent.ShowLoadingIndicator -> oldState.copy(
+                        isLoading = true,
+                        errorMessage = null
+                    )
+                    is HomeEvent.PhotosLoaded -> oldState.copy(
+                        isLoading = false,
+                        photos = event.photos.map { it.mapToUi() },
+                        errorMessage = null
+                    )
+                    is HomeEvent.DisplayToastErrorMessage -> oldState.copy(
+                        isLoading = false,
+                        errorMessage = HomeState.ErrorMessage.Toast(event.errorMessage)
+                    )
+                    is HomeEvent.FilterApplied -> oldState.copy(
+                        isLoading = false,
+                        errorMessage = null,
+                        selectedImageType = event.imageType
+                    )
+                }
             }
         }
     }
